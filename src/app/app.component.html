@@ -1,0 +1,112 @@
+<h1>MetaUI Context Properties</h1>
+
+<m-context *ngIf="!manualControl" #mc0 [object]="pr" operation="edit">
+  <ng-container *ngTemplateOutlet="PrintObject;context:{$implicit: mc0}">
+  </ng-container>
+</m-context>
+
+<!--
+  Print properties related only to Object adn then continue with CLASS
+-->
+<ng-template #PrintObject let-mc>
+  <h2 style="color: cadetblue">Object</h2>
+  <h3>Properties evaluated at Operation/Object level</h3>
+  <ng-container *ngTemplateOutlet="debugPrint;context:{$implicit: mc}">
+  </ng-container>
+
+  <ng-container *ngTemplateOutlet="PrintClass">
+  </ng-container>
+</ng-template>
+
+
+<!--
+  Process class its type & its its fields and their types and properties
+-->
+<ng-template #PrintClass>
+  <h2 style="color: cadetblue">Class</h2>
+  <h3>Properties evaluated for changed scope to class. It will be print all related to class Requisition</h3>
+  <m-context #mcScope scopeKey="class">
+    <ng-container *ngTemplateOutlet="debugPrint;context:{$implicit: mcScope}">
+    </ng-container>
+
+    <h2 style="color: cadetblue">Fields</h2>
+    <ng-template ngFor let-fieldName [ngForOf]="mcScope | properties:'fieldsByZone.zLeft'" let-i="index">
+      <ng-container *ngTemplateOutlet="PrintField;context:{$implicit: fieldName}">
+      </ng-container>
+    </ng-template>
+  </m-context>
+</ng-template>
+
+
+<ng-template #PrintField let-field>
+  <m-context #mcf [field]="field">
+    <span style="font-weight: bold; ">
+          <h3>{{mcf | properties:'field'}}</h3>
+    </span>
+
+    <ng-container *ngTemplateOutlet="debugPrint;context:{$implicit: mcf}">
+    </ng-container>
+
+    <span *ngIf="(mcf | properties:'type') === 'Array'">
+        <ng-container *ngTemplateOutlet="PrintArrayField;context:{$implicit: field}">
+        </ng-container>
+    </span>
+  </m-context>
+</ng-template>
+
+
+<ng-template #PrintArrayField let-field>
+  <h2 style="color: cadetblue; margin-left: 30px">Array Details</h2>
+  <div *ngFor="let li of pr[field]; index as i" style="margin-left: 60px">
+       <h2 style="color: cornflowerblue; margin-left: 30px">Array Item[{{i}}] - {{li.shortText}}</h2>
+
+        <m-context #mcLineItem [object]="li" operation="edit" [pushNewContext]="true">
+           <ng-container *ngTemplateOutlet="PrintObject;context:{$implicit: mcLineItem}">
+           </ng-container>
+        </m-context>
+  </div>
+</ng-template>
+
+<ng-template #debugPrint let-mc>
+  <span *ngIf="false" style="color: green">
+    <ng-container *ngTemplateOutlet="Inspector;context:{$implicit: mc}">
+    </ng-container>
+  </span>
+
+  <ul *ngIf="true" style="margin-left: 15px">
+    <li *ngFor="let record of mc.myContext().allProperties()._map | keyvalue ">
+      {{record.key}} :
+      <span *ngIf="record.key === 'bindings'">
+              &#123;
+              <ul style="margin-left: 25px">
+
+                <li *ngFor="let binding of mc | properties:'bindings' | keyvalue ">
+
+                  <span
+                    *ngIf="binding.value.constructor.name === 'Expr' || binding.value.constructor.name === 'ContextFieldPath'">
+                    <span style="font-style: italic">{{binding.key}} </span>:
+                    {{binding.value.evaluate(mc.myContext())}}  : {{binding.value}}
+                  </span>
+
+                  <span
+                    *ngIf="binding.value.constructor.name !== 'Expr' && binding.value.constructor.name !== 'ContextFieldPath'">
+                      {{binding.key}} : {{binding.value}}
+                  </span>
+                </li>
+              </ul>
+              &#125;
+            </span>
+
+      <span *ngIf="record.key !== 'bindings'">
+               {{mc.myContext().propertyForKey(record.key)}}
+      </span>
+    </li>
+  </ul>
+</ng-template>
+
+<ng-template #Inspector let-mc>
+  <div style="margin-top: 10px; border-top: 1px solid black; margin-left: 160px">
+          <span [innerHTML]="mc.debugString()">
+          </span>
+  </div>
+</ng-template>
