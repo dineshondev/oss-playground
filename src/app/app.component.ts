@@ -13,7 +13,7 @@ import {CompanyCode} from './model/company-code.model';
 })
 export class AppComponent implements OnInit {
   pr: Requisition;
-  manualControl = true;
+  manualControl = false;
 
   constructor(@Inject(META_RULES) protected meta: MetaRules) {
   }
