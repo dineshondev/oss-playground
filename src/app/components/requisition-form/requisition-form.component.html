@@ -19,5 +19,15 @@
         <input class="fd-input" type="text" name="status" [value]="req.status" [disabled]="meta?.status.disabled">
       </div>
     </div>
+
+    <!-- TOTAL AMOUNT -->
+    <div class="fd-row">
+      <div class="fd-col">
+        <label class="fd-form-label"  [class.fd-form-label--required]="meta?.totalNetAmount.required" for="totalNetAmount">Total:</label>
+      </div>
+      <div class="fd-col">
+        <input class="fd-input" type="number" name="totalNetAmount" [value]="req.totalNetAmount.amount" [disabled]="meta?.totalNetAmount.disabled">
+      </div>
+    </div>
   </div>
 </form>

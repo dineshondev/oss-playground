@@ -39,6 +39,12 @@ export class MetaObjectService {
         hidden: false,
         required: true,
       },
+      totalNetAmount: {
+        label: 'Total',
+        disabled: true,
+        hidden: false,
+        required: false,
+      },
     };
 
     this.meta$.next(meta);
@@ -56,4 +62,5 @@ export interface IMetaField {
 export interface IMetaRequisition {
   title: IMetaField;
   status: IMetaField;
+  totalNetAmount: IMetaField;
 }
