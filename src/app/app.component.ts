@@ -56,7 +56,7 @@ export class AppComponent implements OnInit {
     context.pop();
 
     console.log('@@ After documentType rollback we expect default label');
-    this.printProperty('label', context);
+    this.printProperty('label', context)
 
     context.pop();
   }
