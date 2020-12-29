@@ -1,7 +1,23 @@
-<p>requisition-form works!</p>
-<form>
-  <label for="title">Title</label>
-  <input type="text" name="title" [value]="req.title" [disabled]="(meta$ | async)?.title.disabled">
-  <label for="status">Status</label>
-  <input type="text" name="status" [value]="req.status" [disabled]="(meta$ | async)?.status.disabled">
+<form *ngIf="(meta$ | async) as meta">
+  <div class="fd-container fd-form-layout-grid-container fd-form-layout-grid-container--vertical">
+    <!-- TITLE -->
+    <div class="fd-row">
+      <div class="fd-col">
+        <label class="fd-form-label" [class.fd-form-label--required]="meta?.title.required" for="title">Title:</label>
+      </div>
+      <div class="fd-col">
+        <input class="fd-input" type="text" name="title" [value]="req.title" [disabled]="meta?.title.disabled">
+      </div>
+    </div>
+
+    <!-- STATUS -->
+    <div class="fd-row">
+      <div class="fd-col">
+        <label class="fd-form-label"  [class.fd-form-label--required]="meta?.status.required" for="status">Status:</label>
+      </div>
+      <div class="fd-col">
+        <input class="fd-input" type="text" name="status" [value]="req.status" [disabled]="meta?.status.disabled">
+      </div>
+    </div>
+  </div>
 </form>
