@@ -1,0 +1,5 @@
+<p>requisition-form works!</p>
+<form>
+  <label for="title">Title</label>
+  <input type="text" name="title" [value]="req.title" [disabled]="(meta$ | async)?.title.disabled">
+</form>

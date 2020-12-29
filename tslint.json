@@ -147,6 +147,8 @@
       "element",
       "app",
       "kebab-case"
-    ]
+    ],
+    "ordered-imports": false,
+    "object-literal-sort-keys": false
   }
 }

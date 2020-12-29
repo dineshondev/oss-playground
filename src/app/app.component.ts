@@ -13,7 +13,7 @@ import {CompanyCode} from './model/company-code.model';
 })
 export class AppComponent implements OnInit {
   pr: Requisition;
-  manualControl = false;
+  manualControl = true;
 
   constructor(@Inject(META_RULES) protected meta: MetaRules) {
   }
@@ -27,7 +27,6 @@ export class AppComponent implements OnInit {
 
     this.pr.addLineItem(new ReqLineItem('Pen', new Supplier('Office Depot.'),
       new Money(10), 2, new CompanyCode('CC01', 'CC01 description')));
-
 
     if (this.manualControl) {
       this.experimentDirectlyWithMetaUI();
