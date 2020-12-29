@@ -33,6 +33,12 @@ export class MetaObjectService {
         hidden: false,
         required: true,
       },
+      status: {
+        label: 'Status',
+        disabled: false,
+        hidden: false,
+        required: true,
+      },
     };
 
     this.meta$.next(meta);
@@ -49,4 +55,5 @@ export interface IMetaField {
 
 export interface IMetaRequisition {
   title: IMetaField;
+  status: IMetaField;
 }

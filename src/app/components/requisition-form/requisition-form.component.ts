@@ -14,6 +14,7 @@ export class RequisitionFormComponent implements OnInit {
   @Input()
   set requisition(req: Requisition) {
     this.req = req;
+    console.log(req)
     this.metaObjectService.setObject(req);
   }
 
