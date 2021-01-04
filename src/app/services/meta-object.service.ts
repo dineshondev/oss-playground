@@ -25,29 +25,34 @@ export class MetaObjectService {
     this._update();
   }
 
+  public setDocumentType(type: string): void {
+    this.context.set('documentType', type);
+    this._update();
+  }
+
   private _update(): void {
     const meta: IMetaRequisition = {
       title: {
         label: 'Title',
         disabled: false,
-        hidden: false,
-        required: true,
+        visible: false,
+        required: false,
       },
       status: {
         label: 'Status',
         disabled: false,
-        hidden: false,
-        required: true,
+        visible: false,
+        required: false,
       },
       totalNetAmount: {
         label: 'Total',
-        disabled: true,
-        hidden: false,
+        disabled: false,
+        visible: false,
         required: false,
       },
     };
 
-    const props = ['disabled', 'hidden', 'label', 'required'];
+    const props = ['disabled', 'visible', 'label'];
     const fields = this._getFields('Requisition');
 
     for (const field of fields) {
@@ -58,6 +63,9 @@ export class MetaObjectService {
       for (const prop of props) {
         meta[field][prop] = this.context.propertyForKey(prop);
       }
+
+      // check to see if field is required
+      meta[field].required = this.context.propertyForKey('trait') === 'required';
     }
 
     this.meta$.next(meta);
@@ -80,16 +88,15 @@ export class MetaObjectService {
 export interface IMetaField {
   label: string;
   disabled?: boolean;
-  hidden?: boolean;
+  visible?: boolean;
   required?: boolean;
 }
 export const DEFAULT_META_FIELD: IMetaField = {
   label: '',
-    disabled: false,
-    hidden: false,
-    required: false,
+  disabled: false,
+  visible: false,
+  required: false,
 };
-
 
 export interface IMetaRequisition {
   title: IMetaField;
