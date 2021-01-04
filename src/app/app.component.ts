@@ -30,7 +30,8 @@ export class AppComponent implements OnInit, OnDestroy {
     this.subscription.add(
       this.route.queryParams.subscribe((params) => {
         this.manualControl = params.manualControl === 'true';
-        this.reqService.getRequisition('1');
+        const reqId = params.reqId || 'PR1';
+        this.reqService.getRequisition(reqId);
       }),
     );
 
