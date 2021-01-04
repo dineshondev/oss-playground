@@ -8,6 +8,7 @@ import {ContextPropertyPipe} from './context-property.pipe';
 import { RequisitionFormComponent } from './components/requisition-form/requisition-form.component';
 import { MetaObjectService } from './services/meta-object.service';
 import { RouterModule, Routes } from '@angular/router';
+import { RequisitionService } from './services/requisition.service';
 
 const routes: Routes = [];
 
@@ -22,7 +23,7 @@ const routes: Routes = [];
     RouterModule.forRoot(routes),
     MetaUIRulesModule.forRoot(),
   ],
-  providers: [MetaObjectService],
+  providers: [MetaObjectService, RequisitionService],
   bootstrap: [AppComponent],
 })
 export class AppModule {

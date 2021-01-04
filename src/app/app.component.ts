@@ -7,6 +7,7 @@ import {Supplier} from './model/supplier.model';
 import {CompanyCode} from './model/company-code.model';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { RequisitionService } from './services/requisition.service';
 
 @Component({
   selector: 'app-root',
@@ -22,21 +23,20 @@ export class AppComponent implements OnInit, OnDestroy {
   constructor(
     @Inject(META_RULES) protected meta: MetaRules,
     private route: ActivatedRoute,
+    private reqService: RequisitionService,
   ) { }
 
   ngOnInit(): void {
-    this.subscription.add(this.route.queryParams.subscribe((params) => {
-      this.manualControl = params.manualControl === 'true';
-    }));
+    this.subscription.add(
+      this.route.queryParams.subscribe((params) => {
+        this.manualControl = params.manualControl === 'true';
+        this.reqService.getRequisition('1');
+      }),
+    );
 
-    this.pr = new Requisition('PR1', 'Office Items', new Date(), 'Approved',
-      new Money(520));
-
-    this.pr.addLineItem(new ReqLineItem('Apple Keyboard', new Supplier('Apple Inc.'),
-      new Money(500), 1, new CompanyCode('CC01', 'CC01 description')));
-
-    this.pr.addLineItem(new ReqLineItem('Pen', new Supplier('Office Depot.'),
-      new Money(10), 2, new CompanyCode('CC01', 'CC01 description')));
+    this.subscription.add(
+      this.reqService.requisition$.subscribe(req => this.pr = req),
+    );
 
     if (this.manualControl) {
       this.experimentDirectlyWithMetaUI();
