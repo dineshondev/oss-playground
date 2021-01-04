@@ -31,3 +31,24 @@
     </div>
   </div>
 </form>
+<div class="fd-toolbar fd-toolbar--title">
+  <h3>Line Items</h3>
+</div>
+<table class="fd-table">
+  <thead class="fd-table__header">
+    <tr class="fd-table__row">
+      <th class="fd-table__cell">Name</th>
+      <th class="fd-table__cell">Supplier</th>
+      <th class="fd-table__cell">Quantity</th>
+      <th class="fd-table__cell">Price</th>
+    </tr>
+  </thead>
+  <tbody class="fd-table__body">
+    <tr class="fd-table__row" *ngFor="let item of req.lineItems">
+      <td class="fd-table__cell">{{item.shortText}}</td>
+      <td class="fd-table__cell">{{item.supplier.name}}</td>
+      <td class="fd-table__cell">{{item.quantity}}</td>
+      <td class="fd-table__cell">{{item.price.amount}} {{item.price.currency}}</td>
+    </tr>
+  </tbody>
+</table>
