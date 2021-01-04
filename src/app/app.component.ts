@@ -1,24 +1,34 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {Context, META_RULES, MetaRules} from '@ngx-metaui/rules';
 import {Requisition} from './model/requisition.model';
 import {Money} from './model/money.model';
 import {ReqLineItem} from './model/requisition-li.model';
 import {Supplier} from './model/supplier.model';
 import {CompanyCode} from './model/company-code.model';
+import { ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
   pr: Requisition;
-  manualControl = true;
+  manualControl = false;
 
-  constructor(@Inject(META_RULES) protected meta: MetaRules) {
-  }
+  private subscription: Subscription = new Subscription();
+
+  constructor(
+    @Inject(META_RULES) protected meta: MetaRules,
+    private route: ActivatedRoute,
+  ) { }
 
   ngOnInit(): void {
+    this.subscription.add(this.route.queryParams.subscribe((params) => {
+      this.manualControl = params.manualControl === 'true';
+    }));
+
     this.pr = new Requisition('PR1', 'Office Items', new Date(), 'Approved',
       new Money(520));
 
@@ -31,10 +41,13 @@ export class AppComponent implements OnInit {
     if (this.manualControl) {
       this.experimentDirectlyWithMetaUI();
     }
-
   }
 
-  private experimentDirectlyWithMetaUI() {
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+  }
+
+  private experimentDirectlyWithMetaUI(): void {
     const context = this.meta.newContext();
     context.push();
     context.set('layout', 'Inspect');

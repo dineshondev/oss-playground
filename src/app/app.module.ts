@@ -7,6 +7,9 @@ import {AppComponent} from './app.component';
 import {ContextPropertyPipe} from './context-property.pipe';
 import { RequisitionFormComponent } from './components/requisition-form/requisition-form.component';
 import { MetaObjectService } from './services/meta-object.service';
+import { RouterModule, Routes } from '@angular/router';
+
+const routes: Routes = [];
 
 @NgModule({
   declarations: [
@@ -16,6 +19,7 @@ import { MetaObjectService } from './services/meta-object.service';
   ],
   imports: [
     BrowserModule,
+    RouterModule.forRoot(routes),
     MetaUIRulesModule.forRoot(),
   ],
   providers: [MetaObjectService],
