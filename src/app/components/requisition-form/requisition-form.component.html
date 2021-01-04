@@ -1,7 +1,7 @@
 <form *ngIf="(meta$ | async) as meta">
   <div class="fd-container fd-form-layout-grid-container fd-form-layout-grid-container--vertical">
     <!-- TITLE -->
-    <div class="fd-row">
+    <div class="fd-row" *ngIf="meta?.title.visible">
       <div class="fd-col">
         <label class="fd-form-label" [class.fd-form-label--required]="meta?.title.required" for="title">Title:</label>
       </div>
@@ -11,7 +11,7 @@
     </div>
 
     <!-- STATUS -->
-    <div class="fd-row">
+    <div class="fd-row" *ngIf="meta?.status.visible">
       <div class="fd-col">
         <label class="fd-form-label"  [class.fd-form-label--required]="meta?.status.required" for="status">Status:</label>
       </div>
@@ -21,7 +21,7 @@
     </div>
 
     <!-- TOTAL AMOUNT -->
-    <div class="fd-row">
+    <div class="fd-row" *ngIf="meta?.totalNetAmount.visible">
       <div class="fd-col">
         <label class="fd-form-label"  [class.fd-form-label--required]="meta?.totalNetAmount.required" for="totalNetAmount">Total:</label>
       </div>
