@@ -1,36 +1,45 @@
-<form *ngIf="(meta$ | async) as meta">
+<m-context [object]="req" operatation="edit" documentType="RV">
+<form>
   <div class="fd-container fd-form-layout-grid-container fd-form-layout-grid-container--vertical">
     <!-- TITLE -->
-    <div class="fd-row" *ngIf="meta?.title.visible">
+    <m-context #mTitle field="title">
+    <div class="fd-row" *ngIf="mTitle | properties:'visible'">
       <div class="fd-col">
-        <label class="fd-form-label" [class.fd-form-label--required]="meta?.title.required" for="title">Title:</label>
+        <label class="fd-form-label" [class.fd-form-label--required]="(mTitle | properties: 'trait') === 'required'" for="title">Title:</label>
       </div>
       <div class="fd-col">
-        <input class="fd-input" type="text" name="title" [value]="req.title" [disabled]="meta?.title.disabled">
+        <input class="fd-input" type="text" name="title" [value]="req.title" [disabled]="mTitle | properties: 'disabled'">
       </div>
     </div>
+    </m-context>
 
     <!-- STATUS -->
-    <div class="fd-row" *ngIf="meta?.status.visible">
+    <m-context #mStatus field="status">
+    <div class="fd-row" *ngIf="mStatus | properties:  'visible'">
       <div class="fd-col">
-        <label class="fd-form-label"  [class.fd-form-label--required]="meta?.status.required" for="status">Status:</label>
+        <label class="fd-form-label" [class.fd-form-label--required]="(mStatus | properties: 'trait') === 'required'" for="status">Status:</label>
       </div>
       <div class="fd-col">
-        <input class="fd-input" type="text" name="status" [value]="req.status" [disabled]="meta?.status.disabled">
+        <input class="fd-input" type="text" name="status" [value]="req.status" [disabled]="mStatus | properties: 'disabled'">
       </div>
     </div>
+    </m-context>
 
     <!-- TOTAL AMOUNT -->
-    <div class="fd-row" *ngIf="meta?.totalNetAmount.visible">
+    <m-context #mTotal field="totalNetAmout">
+    <div class="fd-row" *ngIf="mTotal | properties: 'visible'">
       <div class="fd-col">
-        <label class="fd-form-label"  [class.fd-form-label--required]="meta?.totalNetAmount.required" for="totalNetAmount">Total:</label>
+        <label class="fd-form-label" [class.fd-form-label--required]="(mTotal | properties: 'trait') === 'required'" for="totalNetAmount">Total:</label>
       </div>
       <div class="fd-col">
-        <input class="fd-input" type="number" name="totalNetAmount" [value]="req.totalNetAmount.amount" [disabled]="meta?.totalNetAmount.disabled">
+        <input class="fd-input" type="number" name="totalNetAmount" [value]="req.totalNetAmount.amount" [disabled]="mTotal | properties: 'disabled'">
       </div>
     </div>
+    </m-context>
   </div>
 </form>
+</m-context>
+
 <div class="fd-toolbar fd-toolbar--title">
   <h3>Line Items</h3>
 </div>
