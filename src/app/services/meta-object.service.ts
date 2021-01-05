@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { META_RULES, MetaRules, Context } from '@ngx-metaui/rules';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -9,7 +10,9 @@ export class MetaObjectService {
 
   private context: Context;
 
-  public meta$: Subject<IMetaRequisition> = new BehaviorSubject(null);
+  // private state$: Subject<Record<MetaObjectType, MetaObject>> = new Subject();
+
+  public meta$: Subject<MetaObject> = new BehaviorSubject(null);
 
   constructor(
     @Inject(META_RULES) protected meta: MetaRules,
@@ -19,6 +22,12 @@ export class MetaObjectService {
     this.context.set('layout', 'Inspect');
     this.context.set('operation', 'view');
   }
+
+  // public select(selector: MetaObjectType): Observable<MetaObject> {
+  //   return this.state$.pipe(
+  //     map(state => state[selector]),
+  //   );
+  // }
 
   public setObject(obj: any): void {
     this.context.set('object', obj);
@@ -31,7 +40,7 @@ export class MetaObjectService {
   }
 
   private _update(): void {
-    const meta: IMetaRequisition = {
+    const meta: MetaObject = {
       title: {
         label: 'Title',
         disabled: false,
@@ -85,6 +94,8 @@ export class MetaObjectService {
 
 }
 
+export type MetaObjectType = 'Requistion' | 'ReqLineItem';
+
 export interface IMetaField {
   label: string;
   disabled?: boolean;
@@ -98,11 +109,4 @@ export const DEFAULT_META_FIELD: IMetaField = {
   required: false,
 };
 
-export interface IMetaRequisition {
-  title: IMetaField;
-  status: IMetaField;
-  totalNetAmount: IMetaField;
-  dueOn?: IMetaField;
-  uniqueName?: IMetaField;
-  lineItems?: IMetaField;
-}
+export type MetaObject = Record<string, IMetaField>;
