@@ -15,7 +15,7 @@
 
     <!-- STATUS -->
     <m-context #mStatus field="status">
-    <div class="fd-row" *ngIf="mStatus | properties:  'visible'">
+    <div class="fd-row" *ngIf="mStatus | properties: 'visible'">
       <div class="fd-col">
         <label class="fd-form-label" [class.fd-form-label--required]="(mStatus | properties: 'trait') === 'required'" for="status">Status:</label>
       </div>
@@ -56,7 +56,13 @@
     <tr class="fd-table__row" *ngFor="let item of req.lineItems">
       <td class="fd-table__cell">{{item.shortText}}</td>
       <td class="fd-table__cell">{{item.supplier.name}}</td>
-      <td class="fd-table__cell">{{item.quantity}}</td>
+      <td class="fd-table__cell">
+      <m-context [object]="item" operatation="edit">
+        <m-context #mQuantity field="quantity">
+        <input class="fd-input" type="number" name="quantity" [value]="item.quantity" [min]="mQuantity | properties: 'minValue'" [disabled]="mQuantity | properties: 'disabled'">
+        </m-context>
+      </m-context>
+      </td>
       <td class="fd-table__cell">{{item.price.amount}} {{item.price.currency}}</td>
     </tr>
   </tbody>

@@ -32,6 +32,9 @@ export class AppComponent implements OnInit, OnDestroy {
         this.manualControl = params.manualControl === 'true';
         const reqId = params.reqId || 'PR1';
         this.reqService.getRequisition(reqId);
+        if (this.manualControl) {
+          this.experimentDirectlyWithMetaUI();
+        }
       }),
     );
 
@@ -39,9 +42,6 @@ export class AppComponent implements OnInit, OnDestroy {
       this.reqService.requisition$.subscribe(req => this.pr = req),
     );
 
-    if (this.manualControl) {
-      this.experimentDirectlyWithMetaUI();
-    }
   }
 
   ngOnDestroy(): void {
@@ -58,19 +58,23 @@ export class AppComponent implements OnInit, OnDestroy {
     context.setScopeKey('class');
 
     console.log('@@ Pushing field TITLE and checking properties >>>');
+    context.push();
     context.set('field', 'title');
-    this.printProperty('label', context);
+    this.printProperty('visible', context);
+    context.pop();
 
 
     console.log('@@ Now trying to push another contextual property, to see if right selector is triggered where we change name >>>');
     console.log('   >> Wrapping push with context.push(); context frame so I can easily roll it back.');
     context.push();
     context.set('documentType', 'RV');
-    this.printProperty('label', context);
+    context.set('field', 'title');
+    this.printProperty('visible', context);
     context.pop();
 
     console.log('@@ After documentType rollback we expect default label');
-    this.printProperty('label', context)
+    context.set('field', 'title');
+    this.printProperty('visible', context)
 
     context.pop();
   }

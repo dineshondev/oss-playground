@@ -4,10 +4,6 @@ class=Requisition {
     visible:true;
     trait: required;
     label:"Name";
-
-    documentType=RV {
-      label: "Agreement Name!";
-    }
   }
 
   field=dueOn {
@@ -28,5 +24,13 @@ class=Requisition {
   field=lineItems {
      visible:true;
      valid: ${value && value.length > 0 ? "You must have more than 1 Lineitem" : null};
+  }
+}
+
+documentType=RV {
+  class=Requisition {
+    field=title {
+      visible: false;
+    }
   }
 }

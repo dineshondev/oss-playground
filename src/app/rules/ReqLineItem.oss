@@ -17,10 +17,13 @@ class=ReqLineItem {
   field=quantity {
      visible:true;
      label: "Qty";
+     minValue: ${object.minQuantity || 1};
   }
 
   field=companyCode {
      visible:true;
      label: "CoCo";
   }
+
+  field=minQuantity { }
 }

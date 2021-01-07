@@ -9,9 +9,9 @@ export class ReqLineItem implements Value {
   price: Money;
   quantity: number;
   companyCode: CompanyCode;
+  minQuantity: number;
 
-
-  constructor(shortText?: string, supplier?: Supplier, price?: Money, quantity?: number, companyCode?: CompanyCode) {
+  constructor(shortText?: string, supplier?: Supplier, price?: Money, quantity?: number, companyCode?: CompanyCode, minQuantity?: number) {
     this.shortText = shortText;
     this.supplier = supplier;
     this.price = price;
@@ -33,7 +33,8 @@ export class ReqLineItem implements Value {
       supplier: Supplier,
       price: Money,
       quantity: Number,
-      companyCode: CompanyCode
+      companyCode: CompanyCode,
+      minQuantity: Number,
     };
   }
 }

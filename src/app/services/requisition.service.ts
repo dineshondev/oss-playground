@@ -40,7 +40,8 @@ export class RequisitionService {
           new Supplier(item.supplier.name),
           new Money(item.price),
           item.quantity,
-          new CompanyCode(item.companyCode.name, item.companyCode.description)
+          new CompanyCode(item.companyCode.name, item.companyCode.description),
+          item.minQuantity || 2,
         ));
       });
     }
@@ -54,7 +55,7 @@ const REQUISITIONS: any[] = [{
   title: 'Office Items',
   dueOn: new Date(),
   status: 'Approved',
-  totalNetAmount: 520,
+  totalNetAmount: 600,
   lineItems: [{
     shortText: 'Apple Keyboard',
     supplier: {
@@ -72,11 +73,12 @@ const REQUISITIONS: any[] = [{
       name: 'Office Depot',
     },
     price: 10,
-    quantity: 2,
+    quantity: 10,
     companyCode: {
       name: 'CC01',
       description: 'CC01 description',
     },
+    minQuantity: 5,
   }],
 }, {
   uniqueName: 'PR2',
