@@ -32,6 +32,7 @@
       true,
       140
     ],
+    "member-access": false,
     "member-ordering": [
       true,
       {
@@ -147,6 +148,8 @@
       "element",
       "app",
       "kebab-case"
-    ]
+    ],
+    "ordered-imports": false,
+    "object-literal-sort-keys": false
   }
 }

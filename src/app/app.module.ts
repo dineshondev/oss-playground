@@ -5,18 +5,26 @@ import {NgModule} from '@angular/core';
 
 import {AppComponent} from './app.component';
 import {ContextPropertyPipe} from './context-property.pipe';
+import { RequisitionFormComponent } from './components/requisition-form/requisition-form.component';
+import { MetaObjectService } from './services/meta-object.service';
+import { RouterModule, Routes } from '@angular/router';
+import { RequisitionService } from './services/requisition.service';
+
+const routes: Routes = [];
 
 @NgModule({
   declarations: [
     AppComponent,
-    ContextPropertyPipe
+    ContextPropertyPipe,
+    RequisitionFormComponent,
   ],
   imports: [
     BrowserModule,
-    MetaUIRulesModule.forRoot()
+    RouterModule.forRoot(routes),
+    MetaUIRulesModule.forRoot(),
   ],
-  providers: [],
-  bootstrap: [AppComponent]
+  providers: [MetaObjectService, RequisitionService],
+  bootstrap: [AppComponent],
 })
 export class AppModule {
 

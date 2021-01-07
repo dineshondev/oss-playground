@@ -1,0 +1,69 @@
+<m-context [object]="req" operatation="edit" documentType="RV">
+<form>
+  <div class="fd-container fd-form-layout-grid-container fd-form-layout-grid-container--vertical">
+    <!-- TITLE -->
+    <m-context #mTitle field="title">
+    <div class="fd-row" *ngIf="mTitle | properties:'visible'">
+      <div class="fd-col">
+        <label class="fd-form-label" [class.fd-form-label--required]="(mTitle | properties: 'trait') === 'required'" for="title">Title:</label>
+      </div>
+      <div class="fd-col">
+        <input class="fd-input" type="text" name="title" [value]="req.title" [disabled]="mTitle | properties: 'disabled'">
+      </div>
+    </div>
+    </m-context>
+
+    <!-- STATUS -->
+    <m-context #mStatus field="status">
+    <div class="fd-row" *ngIf="mStatus | properties: 'visible'">
+      <div class="fd-col">
+        <label class="fd-form-label" [class.fd-form-label--required]="(mStatus | properties: 'trait') === 'required'" for="status">Status:</label>
+      </div>
+      <div class="fd-col">
+        <input class="fd-input" type="text" name="status" [value]="req.status" [disabled]="mStatus | properties: 'disabled'">
+      </div>
+    </div>
+    </m-context>
+
+    <!-- TOTAL AMOUNT -->
+    <m-context #mTotal field="totalNetAmout">
+    <div class="fd-row" *ngIf="mTotal | properties: 'visible'">
+      <div class="fd-col">
+        <label class="fd-form-label" [class.fd-form-label--required]="(mTotal | properties: 'trait') === 'required'" for="totalNetAmount">Total:</label>
+      </div>
+      <div class="fd-col">
+        <input class="fd-input" type="number" name="totalNetAmount" [value]="req.totalNetAmount.amount" [disabled]="mTotal | properties: 'disabled'">
+      </div>
+    </div>
+    </m-context>
+  </div>
+</form>
+</m-context>
+
+<div class="fd-toolbar fd-toolbar--title">
+  <h3>Line Items</h3>
+</div>
+<table class="fd-table">
+  <thead class="fd-table__header">
+    <tr class="fd-table__row">
+      <th class="fd-table__cell">Name</th>
+      <th class="fd-table__cell">Supplier</th>
+      <th class="fd-table__cell">Quantity</th>
+      <th class="fd-table__cell">Price</th>
+    </tr>
+  </thead>
+  <tbody class="fd-table__body">
+    <tr class="fd-table__row" *ngFor="let item of req.lineItems">
+      <td class="fd-table__cell">{{item.shortText}}</td>
+      <td class="fd-table__cell">{{item.supplier.name}}</td>
+      <td class="fd-table__cell">
+      <m-context [object]="item" operatation="edit">
+        <m-context #mQuantity field="quantity">
+        <input class="fd-input" type="number" name="quantity" [value]="item.quantity" [min]="mQuantity | properties: 'minValue'" [disabled]="mQuantity | properties: 'disabled'">
+        </m-context>
+      </m-context>
+      </td>
+      <td class="fd-table__cell">{{item.price.amount}} {{item.price.currency}}</td>
+    </tr>
+  </tbody>
+</table>
