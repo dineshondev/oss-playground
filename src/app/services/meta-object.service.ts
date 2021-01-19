@@ -1,7 +1,6 @@
-import { Inject, Injectable } from '@angular/core';
-import { META_RULES, MetaRules, Context } from '@ngx-metaui/rules';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import {Injectable} from '@angular/core';
+import {Context, UIMeta} from '@ngx-metaui/rules';
+import {BehaviorSubject, Subject} from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -15,7 +14,7 @@ export class MetaObjectService {
   public meta$: Subject<MetaObject> = new BehaviorSubject(null);
 
   constructor(
-    @Inject(META_RULES) protected meta: MetaRules,
+    protected meta: UIMeta,
   ) {
     this.context = this.meta.newContext();
     this.context.push();
@@ -102,6 +101,7 @@ export interface IMetaField {
   visible?: boolean;
   required?: boolean;
 }
+
 export const DEFAULT_META_FIELD: IMetaField = {
   label: '',
   disabled: false,

@@ -28,9 +28,7 @@ class=Requisition {
 }
 
 documentType=RV {
-  class=Requisition {
-    field=title {
-      visible: false;
-    }
-  }
+  class=Requisition { field=title { visible: false; } }
 }
+
+

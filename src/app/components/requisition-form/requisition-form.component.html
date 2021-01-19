@@ -1,69 +1,133 @@
-<m-context [object]="req" operatation="edit" documentType="RV">
-<form>
-  <div class="fd-container fd-form-layout-grid-container fd-form-layout-grid-container--vertical">
-    <!-- TITLE -->
-    <m-context #mTitle field="title">
-    <div class="fd-row" *ngIf="mTitle | properties:'visible'">
-      <div class="fd-col">
-        <label class="fd-form-label" [class.fd-form-label--required]="(mTitle | properties: 'trait') === 'required'" for="title">Title:</label>
-      </div>
-      <div class="fd-col">
-        <input class="fd-input" type="text" name="title" [value]="req.title" [disabled]="mTitle | properties: 'disabled'">
-      </div>
-    </div>
-    </m-context>
+<m-context *ngIf="req" [object]="req" operation="edit" documentType="RV">
+  <m-context scopeKey="class">
+    <form>
+      <div class="fd-container fd-form-layout-grid-container fd-form-layout-grid-container--vertical">
+        <!-- TITLE -->
+        <m-context #mTitle field="title">
+          <div class="fd-row" *ngIf="mTitle | properties:'visible'">
+            <div class="fd-col">
+              <label class="fd-form-label"
+                     [class.fd-form-label--required]="(mTitle | properties: 'trait') === 'required'"
+                     for="title">{{mTitle | properties:'label'}}</label>
+            </div>
+            <div class="fd-col">
+              <input class="fd-input" type="text" name="title" [value]="req.title"
+                     [readonly]="!(mTitle | properties: 'editable':false)"
+                     [disabled]="mTitle | properties: 'disabled'">
+            </div>
+          </div>
+        </m-context>
 
-    <!-- STATUS -->
-    <m-context #mStatus field="status">
-    <div class="fd-row" *ngIf="mStatus | properties: 'visible'">
-      <div class="fd-col">
-        <label class="fd-form-label" [class.fd-form-label--required]="(mStatus | properties: 'trait') === 'required'" for="status">Status:</label>
-      </div>
-      <div class="fd-col">
-        <input class="fd-input" type="text" name="status" [value]="req.status" [disabled]="mStatus | properties: 'disabled'">
-      </div>
-    </div>
-    </m-context>
+        <!-- STATUS -->
+        <m-context #mStatus field="status">
+          <div class="fd-row" *ngIf="mStatus | properties: 'visible'">
+            <div class="fd-col">
+              <label class="fd-form-label"
+                     [class.fd-form-label--required]="(mStatus | properties: 'trait') === 'required'"
+                     for="status">{{mStatus | properties:'label'}}</label>
+            </div>
+            <div class="fd-col">
+              <input class="fd-input" type="text" name="status" [value]="req.status"
+                     [disabled]="mStatus | properties: 'disabled'">
+            </div>
+          </div>
+        </m-context>
 
-    <!-- TOTAL AMOUNT -->
-    <m-context #mTotal field="totalNetAmout">
-    <div class="fd-row" *ngIf="mTotal | properties: 'visible'">
-      <div class="fd-col">
-        <label class="fd-form-label" [class.fd-form-label--required]="(mTotal | properties: 'trait') === 'required'" for="totalNetAmount">Total:</label>
+        <!-- TOTAL AMOUNT -->
+        <m-context #mTotal field="totalNetAmout">
+          <div class="fd-row" *ngIf="mTotal | properties: 'visible'">
+            <div class="fd-col">
+              <label class="fd-form-label"
+                     [class.fd-form-label--required]="(mTotal | properties: 'trait') === 'required'"
+                     for="totalNetAmount">{{mTotal | properties:'label'}}</label>
+            </div>
+            <div class="fd-col">
+              <input class="fd-input" type="number" name="totalNetAmount" [value]="req.totalNetAmount.amount"
+                     [disabled]="mTotal | properties: 'disabled'">
+            </div>
+          </div>
+        </m-context>
       </div>
-      <div class="fd-col">
-        <input class="fd-input" type="number" name="totalNetAmount" [value]="req.totalNetAmount.amount" [disabled]="mTotal | properties: 'disabled'">
-      </div>
-    </div>
-    </m-context>
-  </div>
-</form>
+
+      <m-context #lines field="lineItems">
+        <ng-container *ngTemplateOutlet="renderLineItems;context:{$implicit: lines, lines: req.lineItems}">
+        </ng-container>
+      </m-context>
+
+    </form>
+  </m-context>
 </m-context>
 
-<div class="fd-toolbar fd-toolbar--title">
-  <h3>Line Items</h3>
-</div>
-<table class="fd-table">
-  <thead class="fd-table__header">
-    <tr class="fd-table__row">
-      <th class="fd-table__cell">Name</th>
-      <th class="fd-table__cell">Supplier</th>
-      <th class="fd-table__cell">Quantity</th>
-      <th class="fd-table__cell">Price</th>
-    </tr>
-  </thead>
-  <tbody class="fd-table__body">
-    <tr class="fd-table__row" *ngFor="let item of req.lineItems">
-      <td class="fd-table__cell">{{item.shortText}}</td>
-      <td class="fd-table__cell">{{item.supplier.name}}</td>
-      <td class="fd-table__cell">
-      <m-context [object]="item" operatation="edit">
-        <m-context #mQuantity field="quantity">
-        <input class="fd-input" type="number" name="quantity" [value]="item.quantity" [min]="mQuantity | properties: 'minValue'" [disabled]="mQuantity | properties: 'disabled'">
-        </m-context>
-      </m-context>
-      </td>
-      <td class="fd-table__cell">{{item.price.amount}} {{item.price.currency}}</td>
-    </tr>
-  </tbody>
-</table>
+
+<ng-template #renderLineItems let-mc let-lineItems="lines">
+  <div class="fd-toolbar fd-toolbar--title" *ngIf="mc | properties:'visible'">
+    <span>{{mc | properties:'label'}}</span>
+  </div>
+
+  <m-context #liClass [class]="mc | properties: 'elementType'" operatation="edit">
+
+    <table class="fd-table" *ngIf="mc | properties:'visible'">
+      <thead class="fd-table__header">
+      <tr class="fd-table__row">
+        <th class="fd-table__cell">Name</th>
+        <th class="fd-table__cell">Supplier</th>
+        <th class="fd-table__cell">Quantity</th>
+        <th class="fd-table__cell">Price</th>
+      </tr>
+      </thead>
+      <tbody class="fd-table__body">
+      <tr class="fd-table__row" *ngFor="let item of lineItems">
+        <td class="fd-table__cell">{{item.shortText}}</td>
+        <td class="fd-table__cell">{{item.supplier.name}}</td>
+        <td class="fd-table__cell">
+          <m-context [object]="item" operatation="edit">
+            <m-context #mQuantity field="quantity">
+              <input class="fd-input" type="number" name="quantity" [value]="item.quantity"
+                     [min]="mQuantity | properties: 'minValue'" [disabled]="mQuantity | properties: 'disabled'">
+            </m-context>
+          </m-context>
+        </td>
+        <td class="fd-table__cell">{{item.price.amount}} {{item.price.currency}}</td>
+      </tr>
+      </tbody>
+    </table>
+  </m-context>
+</ng-template>
+
+
+<ng-template #debugPrint let-mc>
+  <!--    <div style="margin-top: 10px; border-top: 1px solid black">-->
+  <!--      <span [innerHTML]="mc.debugString()">-->
+  <!--      </span>-->
+  <!--    </div>-->
+
+  <ul *ngIf="true" style="margin-left: 15px">
+    <li *ngFor="let record of mc.context.allProperties()._map | keyvalue ">
+      {{record.key}} :
+      <span *ngIf="record.key === 'bindings'">
+              &#123;
+              <ul style="margin-left: 25px">
+
+                <li *ngFor="let binding of mc | properties:'bindings' | keyvalue ">
+
+                  <span
+                    *ngIf="binding.value.constructor.name === 'Expr' || binding.value.constructor.name === 'ContextFieldPath'">
+                    <span style="font-style: italic">{{binding.key}} </span>:
+                    {{binding.value.evaluate(mc.context)}}  : {{binding.value}}
+                  </span>
+
+                  <span
+                    *ngIf="binding.value.constructor.name !== 'Expr' && binding.value.constructor.name !== 'ContextFieldPath'">
+                      {{binding.key}} : {{binding.value}}
+                  </span>
+                </li>
+              </ul>
+              &#125;
+            </span>
+
+      <span *ngIf="record.key !== 'bindings'">
+             {{mc.context.propertyForKey(record.key)}}
+            </span>
+    </li>
+  </ul>
+</ng-template>

@@ -2,18 +2,25 @@ import * as userRules from './rules/user-rules';
 import {MetaConfig, MetaUIRulesModule} from '@ngx-metaui/rules';
 import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
-
+import {RequisitionFormComponent} from './components/requisition-form/requisition-form.component';
+import {MetaObjectService} from './services/meta-object.service';
+import {RouterModule, Routes} from '@angular/router';
+import {RequisitionService} from './services/requisition.service';
 import {AppComponent} from './app.component';
+
+const routes: Routes = [];
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    RequisitionFormComponent
   ],
   imports: [
     BrowserModule,
+    RouterModule.forRoot(routes),
     MetaUIRulesModule.forRoot()
   ],
-  providers: [],
+  providers: [MetaObjectService, RequisitionService],
   bootstrap: [AppComponent]
 })
 export class AppModule {

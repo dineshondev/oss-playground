@@ -1,6 +1,6 @@
 <h1>MetaUI Context Properties</h1>
 
-<m-context *ngIf="!manualControl" #mc0 [object]="pr" operation="edit">
+<m-context *ngIf="false" #mc0 [object]="pr" operation="edit">
   <ng-container *ngTemplateOutlet="PrintObject;context:{$implicit: mc0}">
   </ng-container>
 </m-context>
@@ -111,4 +111,4 @@
   </div>
 </ng-template>
 
-<app-requisition-form *ngIf="manualControl" [req]="pr"></app-requisition-form>
+<app-requisition-form *ngIf="true" [req]="pr"></app-requisition-form>

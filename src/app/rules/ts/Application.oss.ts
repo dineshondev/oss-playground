@@ -5,7 +5,7 @@
  *
  */
 /* tslint:disable */
-export const ApplicationRule = '/**  * Module represent Global Top level application app tab. Modules are used in combination with  * <m-app> component.  *  * Application.oss is used for all global settings and OSS definitions  */ module { } ';
+export const ApplicationRule = '/**ɵ * Module represent Global Top level application app tab. Modules are used in combination withɵ * <m-app> component.ɵ *ɵ * Application.oss is used for all global settings and OSS definitionsɵ */ɵmodule {ɵ}ɵ';
 /* tslint:disable */
 /**
  *  @formatter:on
