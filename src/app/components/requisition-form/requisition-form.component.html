@@ -115,7 +115,7 @@
 
 <ng-template #editor>
   <div class="fd-form-item" [formGroup]="group">
-    <select formControlName="ruleType" (change)="onChange($event.target)">
+    <select class="select-css" formControlName="ruleType" (change)="onChange($event.target)">
       >
       <option value="" disabled>Choose Rule</option>
       <option *ngFor="let rule of rules" [ngValue]="rule">{{rule}}</option>
