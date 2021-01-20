@@ -60,7 +60,7 @@
               </div>
               <div class="fd-col">
                 <input class="fd-input" type="number" name="totalNetAmount"
-                       [(ngModel)]="req.totalNetAmount.amount "
+                       [(ngModel)]="req.totalNetAmount.amount"
                        [disabled]="mTotal | properties: 'disabled'">
               </div>
             </div>
@@ -121,15 +121,19 @@
       <option *ngFor="let rule of rules" [ngValue]="rule">{{rule}}</option>
     </select>
 
-    <textarea class="fd-textarea fd-textarea--compact"
-              id="textarea-123"
-              rows="25"
-              formControlName="oss"
-              [value]="currentRule"
-              placeholder="No Rule Loaded">
+<!--    <textarea class="fd-textarea fd-textarea&#45;&#45;compact"-->
+<!--              id="textarea-123"-->
+<!--              rows="25"-->
+<!--              formControlName="oss"-->
+<!--              [value]="currentRule"-->
+<!--              placeholder="No Rule Loaded">-->
 
-    </textarea>
-    <button class="fd-button fd-button--emphasized" (click)="reloadRule()">Update</button>
+<!--    </textarea>-->
+
   </div>
+  <div style="margin-top:10px;height: 600px">
+    <ngx-monaco-editor style="height: 100%" [options]="editorOptions" [(ngModel)]="currentRule"></ngx-monaco-editor>
+  </div>
+  <button class="fd-button fd-button--emphasized" (click)="reloadRule()">Update</button>
 </ng-template>
 

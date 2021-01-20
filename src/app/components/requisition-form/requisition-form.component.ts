@@ -26,16 +26,27 @@ export class RequisitionFormComponent implements AfterViewInit {
   currentRule = '';
 
 
+  editorOptions = {theme: 'vs-dark', language: 'css'};
+
   constructor(public _cd: ChangeDetectorRef, private ruleEngine: UIMeta) {
     this.group.addControl('ruleType', new FormControl(''));
     this.group.addControl('oss', new FormControl(''));
     this.ruleEngine.registerDependency('controller', this);
+
+
   }
 
   ngAfterViewInit(): void {
 
     this.name2Rule.set('Requisition.oss', RequisitionRule.replace(/ɵ/g, '\n'));
     this.name2Rule.set('ReqLineItem.oss', ReqLineItemRule.replace(/ɵ/g, '\n'));
+
+
+    setTimeout(() => {
+      window.monaco.languages.css.cssDefaults.setDiagnosticsOptions({
+        validate: false
+      });
+    }, 2000);
   }
 
 
@@ -49,7 +60,7 @@ export class RequisitionFormComponent implements AfterViewInit {
     this.ruleEngine.reloadRuleFile({
       module: 'App',
       filePath: this.group.controls['ruleType'].value,
-      content: this.group.controls['oss'].value
+      content: this.currentRule
     });
     this.ruleEngine.registerDependency('controller', this);
     this.mc.markDirty();

@@ -8,6 +8,7 @@ import {RouterModule, Routes} from '@angular/router';
 import {RequisitionService} from './services/requisition.service';
 import {AppComponent} from './app.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {MonacoEditorModule} from 'ngx-monaco-editor';
 
 const routes: Routes = [];
 
@@ -20,6 +21,7 @@ const routes: Routes = [];
     BrowserModule,
     ReactiveFormsModule,
     FormsModule,
+    MonacoEditorModule.forRoot(),
     RouterModule.forRoot(routes),
     MetaUIRulesModule.forRoot()
   ],
