@@ -7,6 +7,7 @@ import {MetaObjectService} from './services/meta-object.service';
 import {RouterModule, Routes} from '@angular/router';
 import {RequisitionService} from './services/requisition.service';
 import {AppComponent} from './app.component';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 const routes: Routes = [];
 
@@ -17,6 +18,8 @@ const routes: Routes = [];
   ],
   imports: [
     BrowserModule,
+    ReactiveFormsModule,
+    FormsModule,
     RouterModule.forRoot(routes),
     MetaUIRulesModule.forRoot()
   ],

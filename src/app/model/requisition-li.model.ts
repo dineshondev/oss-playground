@@ -1,5 +1,5 @@
 import {Supplier} from './supplier.model';
-import {Value} from '@ngx-metaui/rules';
+import {CompositeType, Value} from '@ngx-metaui/rules';
 import {Money} from './money.model';
 import {CompanyCode} from './company-code.model';
 
@@ -10,6 +10,8 @@ export class ReqLineItem implements Value {
   quantity: number;
   companyCode: CompanyCode;
   minQuantity: number;
+
+  parent: CompositeType = null;
 
   constructor(shortText?: string, supplier?: Supplier, price?: Money, quantity?: number, companyCode?: CompanyCode, minQuantity?: number) {
     this.shortText = shortText;
