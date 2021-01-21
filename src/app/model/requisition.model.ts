@@ -7,11 +7,11 @@ export class Requisition implements Entity {
   title: string;
   dueOn: Date;
   status: string;
-  totalNetAmount: Money;
+  totalNetAmount: number;
   lineItems: Array<ReqLineItem>;
 
 
-  constructor(uniqueName?: string, title?: string, dueOn?: Date, status?: string, totalNetAmount?: Money,
+  constructor(uniqueName?: string, title?: string, dueOn?: Date, status?: string, totalNetAmount?: number,
               lineItems?: Array<ReqLineItem>) {
     this.uniqueName = uniqueName;
     this.title = title;

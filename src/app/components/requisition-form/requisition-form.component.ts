@@ -1,8 +1,7 @@
 import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, ViewChild} from '@angular/core';
 import {Requisition} from 'src/app/model/requisition.model';
-import {FormControl, FormGroup} from '@angular/forms';
 import {MetaContextComponent, UIMeta} from '@ngx-metaui/rules';
-import {ReqLineItemRule, RequisitionRule} from '../../rules/user-rules'
+import {ApplicationRule, ReqLineItemRule, RequisitionRule} from '../../rules/user-rules'
 
 
 @Component({
@@ -15,55 +14,53 @@ export class RequisitionFormComponent implements AfterViewInit {
   @Input()
   public req: Requisition;
 
-
   @ViewChild('rootContext')
   mc: MetaContextComponent;
 
-  rules: any = ['Requisition.oss', 'ReqLineItem.oss'];
 
-  group: FormGroup = new FormGroup({});
-  name2Rule: Map<string, string> = new Map<string, string>();
+  rules: any = ['Application.oss', 'Requisition.oss', 'ReqLineItem.oss'];
   currentRule = '';
+  currentRuleContent = '';
 
-
+  name2Rule: Map<string, string> = new Map<string, string>();
   editorOptions = {theme: 'vs-dark', language: 'css'};
 
   constructor(public _cd: ChangeDetectorRef, private ruleEngine: UIMeta) {
-    this.group.addControl('ruleType', new FormControl(''));
-    this.group.addControl('oss', new FormControl(''));
     this.ruleEngine.registerDependency('controller', this);
-
-
   }
 
   ngAfterViewInit(): void {
-
+    this.name2Rule.set('Application.oss', ApplicationRule.replace(/ɵ/g, '\n'));
     this.name2Rule.set('Requisition.oss', RequisitionRule.replace(/ɵ/g, '\n'));
     this.name2Rule.set('ReqLineItem.oss', ReqLineItemRule.replace(/ɵ/g, '\n'));
 
 
     setTimeout(() => {
-      window.monaco.languages.css.cssDefaults.setDiagnosticsOptions({
-        validate: false
-      });
+      if (window.monaco && window.monaco.languages) {
+        window.monaco.languages.css.cssDefaults.setDiagnosticsOptions({
+          validate: false
+        });
+      }
     }, 2000);
   }
 
 
-  onChange(event: Event) {
-    console.log('rule => ', event);
-    this.currentRule = this.name2Rule.get(this.group.controls['ruleType'].value);
+  onRuleChange(): void {
+    this.currentRuleContent = this.name2Rule.get(this.currentRule);
   }
 
+  trackByFn(index, item) {
+    return item;
+  }
 
   reloadRule() {
     this.ruleEngine.reloadRuleFile({
       module: 'App',
-      filePath: this.group.controls['ruleType'].value,
-      content: this.currentRule
+      filePath: this.currentRule,
+      content: this.currentRuleContent
     });
     this.ruleEngine.registerDependency('controller', this);
     this.mc.markDirty();
-    this._cd.markForCheck();
+    this._cd.detectChanges();
   }
 }

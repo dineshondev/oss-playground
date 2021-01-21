@@ -30,7 +30,7 @@ export class RequisitionService {
       data.title,
       data.dueOn,
       data.status,
-      new Money(data.totalNetAmount),
+      data.totalNetAmount,
     );
 
     if (Array.isArray(data.lineItems)) {
@@ -38,7 +38,7 @@ export class RequisitionService {
         req.addLineItem(new ReqLineItem(
           item.shortText,
           new Supplier(item.supplier.name),
-          new Money(item.price),
+          item.price,
           item.quantity,
           new CompanyCode(item.companyCode.name, item.companyCode.description),
           item.minQuantity || 2,

@@ -1,5 +1,5 @@
 import * as userRules from './rules/user-rules';
-import {MetaConfig, MetaUIRulesModule} from '@ngx-metaui/rules';
+import {MetaConfig, MetaUIRulesModule, UIMeta} from '@ngx-metaui/rules';
 import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
 import {RequisitionFormComponent} from './components/requisition-form/requisition-form.component';
@@ -9,35 +9,38 @@ import {RequisitionService} from './services/requisition.service';
 import {AppComponent} from './app.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MonacoEditorModule} from 'ngx-monaco-editor';
+import {MetaValidator} from './components/requisition-form/meta.validator';
+import {ContextFlattenVisible} from './components/requisition-form/meta.flatten-visible.pipe';
+import {DateInputConverter} from './components/requisition-form/date-converter.directive';
+import {NgxCurrencyModule} from 'ngx-currency';
 
 const routes: Routes = [];
 
 @NgModule({
   declarations: [
     AppComponent,
-    RequisitionFormComponent
+    RequisitionFormComponent,
+    MetaValidator,
+    ContextFlattenVisible,
+    DateInputConverter
   ],
   imports: [
     BrowserModule,
     ReactiveFormsModule,
     FormsModule,
+    NgxCurrencyModule,
     MonacoEditorModule.forRoot(),
     RouterModule.forRoot(routes),
-    MetaUIRulesModule.forRoot()
+    MetaUIRulesModule.forRoot({loadApplicationRule: true})
   ],
   providers: [MetaObjectService, RequisitionService],
   bootstrap: [AppComponent]
 })
 export class AppModule {
 
-  constructor(private config: MetaConfig) {
+  constructor(private config: MetaConfig, private re: UIMeta) {
+    config.registerRules(userRules)
 
-    // mandatory - you need to register app defined rules and types since there is no
-    // introspection in js
-
-    const rules: any[] = config.get('metaui.rules.user-rules') || [];
-    rules.push(userRules);
-    config.set('metaui.rules.user-rules', rules);
 
   }
 }

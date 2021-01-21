@@ -1,29 +1,38 @@
 class=ReqLineItem {
+  field=(price, shortText, supplier, companyCode, quantity ) {
+    after: zLeft;
+  }
+
   field=shortText {
-    visible:true;
+    editable:false;
     label: "Product Name";
   }
 
   field=supplier {
-    visible:true;
+    editable:false;
     label: "Supplier";
   }
 
   field=price {
-    visible:true;
+    editable:false;
     label: "Unit Price";
   }
 
   field=quantity {
-     visible:true;
      label: "Qty";
-     minValue: ${object.minQuantity || 1};
+     valid: ${ parseInt(value) >= 1 ? true : "Minimum Qty not met"};
   }
 
   field=companyCode {
-     visible:true;
-     label: "CoCo";
+    editable:false;
+    visible:false;
+    label: "Company Code";
   }
 
-  field=minQuantity { }
+  field=minQuantity {
+      visible:false;
+  }
+
+  zNone => *;
+  zLeft => shortText  =>  supplier  => companyCode  => quantity => price;
 }

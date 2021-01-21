@@ -25,5 +25,9 @@ export class Supplier implements Entity {
     return this.name;
   }
 
+  toString(): string {
+    return this.name;
+  }
+
 
 }

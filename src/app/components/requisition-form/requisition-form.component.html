@@ -1,139 +1,263 @@
 <div class="fd-container">
   <div class="fd-row">
     <div class="fd-col fd-col--full">
-      <ng-container *ngTemplateOutlet="content">
+      <ng-container *ngTemplateOutlet="appContent">
       </ng-container>
 
     </div>
     <div class="fd-col fd-col--6">
-      <ng-container *ngTemplateOutlet="editor">
+      <ng-container *ngTemplateOutlet="ossEditor">
       </ng-container>
     </div>
   </div>
 </div>
 
 
-<ng-template #content>
+<ng-template #appContent>
   <m-context #rootContext *ngIf="req" [object]="req" operation="edit" documentType="RV">
     <m-context scopeKey="class">
       <form>
-        <div class="fd-container fd-form-layout-grid-container fd-form-layout-grid-container--vertical">
-          <!-- TITLE -->
-          <m-context #mTitle field="title">
-            <div class="fd-row" *ngIf="mTitle | properties:'visible'">
-              <div class="fd-col">
-                <label class="fd-form-label"
-                       [class.fd-form-label--required]="(mTitle | properties: 'trait') === 'required'"
-                       for="title">{{mTitle | properties:'label'}}</label>
+        <div class="fd-container fd-form-layout-grid-container fd-form-layout-grid-container--vertical"
+             style="max-width:600px">
+          <ng-template ngFor let-field [ngForOf]="rootContext | flattenVisible" let-rank="index"
+                       [ngForTrackBy]="trackByFn">
+            <ng-template [ngIf]="field !== 'lineItems'" [ngIfElse]="ffLines">
+              <div class="fd-col fd-col-lg--6 fd-col-xl--4 fd-col--wrap">
+                <div class="fd-row">
+                  <div class="fd-col">
+                    <ng-container *ngTemplateOutlet="ff;context:{$implicit: field }">
+                    </ng-container>
+                  </div>
+                </div>
               </div>
-              <div class="fd-col">
-                <input class="fd-input" type="text" name="title"
-                       [(ngModel)]="req.title"
-                       [readonly]="!(mTitle | properties: 'editable':false)"
-                       [disabled]="mTitle | properties: 'disabled'">
-              </div>
-            </div>
-          </m-context>
+            </ng-template>
 
-          <!-- STATUS -->
-          <m-context #mStatus field="status">
-            <div class="fd-row" *ngIf="mStatus | properties: 'visible'">
-              <div class="fd-col">
-                <label class="fd-form-label"
-                       [class.fd-form-label--required]="(mStatus | properties: 'trait') === 'required'"
-                       for="status">{{mStatus | properties:'label'}}</label>
-              </div>
-              <div class="fd-col">
-                <input class="fd-input" type="text" name="status" [(ngModel)]="req.status"
-                       [disabled]="mStatus | properties: 'disabled'">
-              </div>
-            </div>
-          </m-context>
-
-          <!-- TOTAL AMOUNT -->
-          <m-context #mTotal field="totalNetAmout">
-            <div class="fd-row" *ngIf="mTotal | properties: 'visible'">
-              <div class="fd-col">
-                <label class="fd-form-label"
-                       [class.fd-form-label--required]="(mTotal | properties: 'trait') === 'required'"
-                       for="totalNetAmount">{{mTotal | properties:'label'}}</label>
-              </div>
-              <div class="fd-col">
-                <input class="fd-input" type="number" name="totalNetAmount"
-                       [(ngModel)]="req.totalNetAmount.amount"
-                       [disabled]="mTotal | properties: 'disabled'">
-              </div>
-            </div>
-          </m-context>
+          </ng-template>
         </div>
-
-        <m-context #lines field="lineItems">
-          <ng-container *ngTemplateOutlet="renderLineItems;context:{$implicit: lines, lines: req.lineItems}">
-          </ng-container>
-        </m-context>
 
       </form>
     </m-context>
   </m-context>
 </ng-template>
-<ng-template #renderLineItems let-mc let-lineItems="lines">
-  <div class="fd-toolbar fd-toolbar--title" *ngIf="mc | properties:'visible'">
-    <span>{{mc | properties:'label'}}</span>
-  </div>
 
-  <m-context #liClass [class]="mc | properties: 'elementType'" operatation="edit">
-
-    <table class="fd-table" *ngIf="mc | properties:'visible'">
-      <thead class="fd-table__header">
-      <tr class="fd-table__row">
-        <th class="fd-table__cell">Name</th>
-        <th class="fd-table__cell">Supplier</th>
-        <th class="fd-table__cell">Quantity</th>
-        <th class="fd-table__cell">Price</th>
-      </tr>
-      </thead>
-      <tbody class="fd-table__body">
-      <tr class="fd-table__row" *ngFor="let item of lineItems">
-        <td class="fd-table__cell">{{item.shortText}}</td>
-        <td class="fd-table__cell">{{item.supplier.name}}</td>
-        <td class="fd-table__cell">
-          <m-context [object]="item" operatation="edit">
-            <m-context #mQuantity field="quantity">
-              <input class="fd-input" type="number" name="quantity"
-                     [(ngModel)]="item.quantity"
-                     [readonly]="!(mQuantity | properties: 'editable':false)"
-                     [min]="mQuantity | properties: 'minValue'" [disabled]="mQuantity | properties: 'disabled'">
-            </m-context>
-          </m-context>
-        </td>
-        <td class="fd-table__cell">{{item.price.amount}} {{item.price.currency}}</td>
-      </tr>
-      </tbody>
-    </table>
-  </m-context>
-</ng-template>
-
-<ng-template #editor>
-  <div class="fd-form-item" [formGroup]="group">
-    <select class="select-css" formControlName="ruleType" (change)="onChange($event.target)">
+<ng-template #ossEditor>
+  <div class="fd-form-item">
+    <select class="select-css" [(ngModel)]="currentRule" (ngModelChange)="onRuleChange()">
       >
       <option value="" disabled>Choose Rule</option>
       <option *ngFor="let rule of rules" [ngValue]="rule">{{rule}}</option>
     </select>
 
-<!--    <textarea class="fd-textarea fd-textarea&#45;&#45;compact"-->
-<!--              id="textarea-123"-->
-<!--              rows="25"-->
-<!--              formControlName="oss"-->
-<!--              [value]="currentRule"-->
-<!--              placeholder="No Rule Loaded">-->
-
-<!--    </textarea>-->
-
   </div>
   <div style="margin-top:10px;height: 600px">
-    <ngx-monaco-editor style="height: 100%" [options]="editorOptions" [(ngModel)]="currentRule"></ngx-monaco-editor>
+    <ngx-monaco-editor style="height: 100%" [options]="editorOptions"
+                       [(ngModel)]="currentRuleContent"></ngx-monaco-editor>
   </div>
   <button class="fd-button fd-button--emphasized" (click)="reloadRule()">Update</button>
 </ng-template>
 
+
+<!-- Render Form Field-->
+<ng-template #ff let-field>
+  <m-context #metaField [field]="field">
+    <div class="fd-form-item" *ngIf="metaField | properties:'visible'">
+      <label class="fd-form-label"
+             [class.fd-form-label--required]="metaField | properties:'required':false"
+             [attr.for]="field"
+             [attr.required]="(metaField | properties:'required':false) && (metaField | properties: 'editable':false)">
+        {{metaField | properties:'label'}}
+      </label>
+
+      <ng-container
+        *ngTemplateOutlet="ffControls;context:{
+        $implicit: field, mc:metaField,
+        type: (metaField | properties:'type'),
+        editable: (metaField | properties:'editable'),
+        model: req
+        }">
+      </ng-container>
+    </div>
+  </m-context>
+</ng-template>
+
+
+<!-- Render Form Field line Item-->
+<ng-template #ffLines>
+  <div class="fd-col fd-col-lg--12 fd-col-xl--12">
+    <div class="fd-row">
+      <div class="fd-col">
+        <ng-container *ngTemplateOutlet="ff;context:{$implicit: 'lineItems' }">
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+
+<ng-template #ffControls let-field let-mc="mc" let-type="type" let-editable="editable" let-model="model">
+  <ng-template [ngIf]="editable">
+    <ng-template [ngIf]="type === 'String' || type === 'Number'">
+      <ng-container
+        *ngTemplateOutlet="OtherControl;context:{ $implicit: field, mc:mc, type: (mc | properties:'type'), editable: (mc | properties:'editable'), model:model }">
+      </ng-container>
+    </ng-template>
+
+    <ng-template [ngIf]="type === 'Date'">
+      <ng-container
+        *ngTemplateOutlet="DateControl;context:{ $implicit: field, mc:mc, type: (mc | properties:'type'), editable: (mc | properties:'editable'), model:model }">
+      </ng-container>
+    </ng-template>
+
+
+    <ng-template [ngIf]="type === 'Money'">
+      <ng-container
+        *ngTemplateOutlet="MoneyControl;context:{ $implicit: field, mc:mc, type: (mc | properties:'type'), editable: (mc | properties:'editable'), model:model }">
+      </ng-container>
+    </ng-template>
+  </ng-template>
+
+  <ng-template [ngIf]="type === 'Array'">
+    <ng-container
+      *ngTemplateOutlet="ArrayControlAsTable;context:{ $implicit: field, mc:mc, type: (mc | properties:'type'), editable: (mc | properties:'editable') }">
+    </ng-container>
+  </ng-template>
+
+
+  <ng-template [ngIf]="!editable">
+    <span clas="string-field">{{model[field]}}</span>
+  </ng-template>
+
+</ng-template>
+
+
+<ng-template #renderLineItems let-mc let-lineItems="lines">
+  <table class="fd-table" *ngIf="mc | properties:'visible'">
+    <m-context [class]="mc | properties: 'elementType'" [object]="{}" style="display: table-header-group"
+               [ngClass]="'fd-table__header'" operation="list">
+      <m-context #tableMain scopeKey="class" style="display: table-row" [ngClass]="'fd-table__row'">
+
+        <ng-template ngFor let-field [ngForOf]="tableMain | flattenVisible:'table'" let-rank="index"
+                     [ngForTrackBy]="trackByFn">
+          <ng-container *ngTemplateOutlet="tableCell;context:{$implicit: field, isHeader: true}">
+          </ng-container>
+        </ng-template>
+
+      </m-context>
+    </m-context>
+
+    <tbody class="fd-table__body">
+    <ng-template ngFor let-item [ngForOf]="lineItems" let-rank="index">
+      <m-context #liValue [object]="item" operation="edit" [pushNewContext]="true"
+                 style="display: table-row" [ngClass]="'fd-table__row'">
+
+        <ng-template ngFor let-field [ngForOf]="liValue | flattenVisible" let-rank="index" [ngForTrackBy]="trackByFn">
+          <ng-container *ngTemplateOutlet="tableCell;context:{$implicit: field, isHeader: false, model:item}">
+          </ng-container>
+        </ng-template>
+      </m-context>
+    </ng-template>
+    </tbody>
+  </table>
+</ng-template>
+
+
+<ng-template #tableCell let-field let-isHeader="isHeader" let-model="model">
+  <ng-template [ngIf]="isHeader">
+    <m-context #cell [field]="field" style="display: table-cell; vertical-align: middle;"
+               [ngClass]="'fd-table__cell'">
+      {{cell | properties: 'label'}}
+    </m-context>
+  </ng-template>
+
+  <ng-template [ngIf]="!isHeader">
+    <m-context #cell [field]="field" style="display: table-cell; vertical-align: middle;"
+               [ngClass]="'fd-table__cell'">
+      <ng-container
+        *ngTemplateOutlet="ffControls;context:{
+        $implicit: field, mc:cell,
+        type: (cell | properties:'type'),
+        editable: (cell | properties:'editable'),
+        model: model
+        }">
+      </ng-container>
+    </m-context>
+  </ng-template>
+
+
+</ng-template>
+
+
+<ng-template #DateControl let-field let-mc="mc" let-type="type" let-editable="editable" let-model="model">
+
+  <input #formInput="ngModel"
+         metaValid
+         [attr.id]="field"
+         [attr.name]="field"
+         class="fd-input"
+         type="date"
+         [(ngModel)]="model[field]"
+         [context]="mc"
+         [required]="mc | properties:'required':false"
+         [readonly]="!(mc | properties: 'editable':false)"
+         [disabled]="mc | properties: 'disabled'">
+
+  <ng-container *ngTemplateOutlet="error;context:{ $implicit: formInput}">
+  </ng-container>
+</ng-template>
+
+<ng-template #OtherControl let-field let-mc="mc" let-type="type" let-editable="editable" let-model="model">
+  <input #formInput="ngModel"
+         metaValid
+         [attr.id]="field"
+         [attr.name]="field"
+         class="fd-input"
+         [attr.type]="type.toLowerCase()"
+         [(ngModel)]="model[field]"
+         [context]="mc"
+         [required]="mc | properties:'required':false"
+         [readonly]="!(mc | properties: 'editable':false)"
+         [disabled]="mc | properties: 'disabled'">
+
+  <ng-container *ngTemplateOutlet="error;context:{ $implicit: formInput}">
+  </ng-container>
+</ng-template>
+
+
+<ng-template #MoneyControl let-field let-mc="mc" let-type="type" let-editable="editable" let-model="model">
+  <input #formInput="ngModel"
+         metaValid
+         currencyMask
+         [options]="{ prefix: '$ ', thousands: '.', decimal: ',' , inputMode: 'NATURALs'}"
+         [attr.id]="field"
+         [attr.name]="field"
+         class="fd-input"
+         [(ngModel)]="model[field]"
+         [context]="mc"
+         [required]="mc | properties:'required':false"
+         [readonly]="!(mc | properties: 'editable':false)"
+         [disabled]="mc | properties: 'disabled'">
+
+
+  <ng-container *ngTemplateOutlet="error;context:{ $implicit: formInput}">
+  </ng-container>
+</ng-template>
+
+
+<ng-template #ArrayControlAsTable let-field let-mc="mc" let-type="type" let-editable="editable">
+  <ng-container *ngTemplateOutlet="renderLineItems;context:{$implicit: mc, lines: req[field] }">
+  </ng-container>
+</ng-template>
+
+<ng-template #error let-formInput>
+
+  <div style="color:red" *ngIf="formInput.errors && (formInput.dirty || formInput.touched) ">
+    <p *ngIf="formInput.errors">
+    <span *ngIf="formInput.errors.metavalid">
+            {{formInput.errors.metavalid.msg    }}
+        </span>
+      <span *ngIf="formInput.errors?.required && !formInput.errors.metavalid">
+            Required field
+    </span>
+    </p>
+  </div>
+</ng-template>

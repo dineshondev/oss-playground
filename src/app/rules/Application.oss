@@ -6,3 +6,15 @@
  */
 module {
 }
+
+field {
+    @trait=required {
+        operation=(edit, create) {
+            required:true;
+            object {
+                valid: ${( value == null || value.length  == 0) ? "Required field": true};
+            }
+        }
+    }
+
+}
