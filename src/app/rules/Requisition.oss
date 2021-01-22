@@ -1,5 +1,10 @@
 class=Requisition {
 
+ field=uniqueName {
+   editable:false;
+   label:"Id";
+  }
+
   field=title {
     trait: required;
     label:"Name";
@@ -11,6 +16,8 @@ class=Requisition {
 
   field=status {
     label: 'State';
+    component: Select;
+    choices:['New', 'In Progress', 'Approving', 'Approved', 'Ordered'];
   }
 
   field=totalNetAmount {
@@ -18,7 +25,7 @@ class=Requisition {
   }
 
   field=lineItems {
-     valid: ${value && value.length > 0 ? "You must have more than 1 Lineitem" : null};
+     component:Table;
   }
   zNone => *;
   zLeft => uniqueName => title  =>  status  => totalNetAmount  => dueOn => lineItems;

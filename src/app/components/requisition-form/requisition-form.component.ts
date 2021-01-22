@@ -1,7 +1,18 @@
-import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, ViewChild} from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnInit,
+  QueryList,
+  ViewChild,
+  ViewChildren
+} from '@angular/core';
 import {Requisition} from 'src/app/model/requisition.model';
 import {MetaContextComponent, UIMeta} from '@ngx-metaui/rules';
 import {ApplicationRule, ReqLineItemRule, RequisitionRule} from '../../rules/user-rules'
+import {NgModel} from '@angular/forms';
 
 
 @Component({
@@ -10,12 +21,15 @@ import {ApplicationRule, ReqLineItemRule, RequisitionRule} from '../../rules/use
   styleUrls: ['./requisition-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class RequisitionFormComponent implements AfterViewInit {
+export class RequisitionFormComponent implements AfterViewInit, OnInit {
   @Input()
   public req: Requisition;
 
   @ViewChild('rootContext')
   mc: MetaContextComponent;
+
+  @ViewChildren('formInput')
+  fields: QueryList<NgModel>;
 
 
   rules: any = ['Application.oss', 'Requisition.oss', 'ReqLineItem.oss'];
@@ -29,12 +43,14 @@ export class RequisitionFormComponent implements AfterViewInit {
     this.ruleEngine.registerDependency('controller', this);
   }
 
-  ngAfterViewInit(): void {
+  ngOnInit(): void {
     this.name2Rule.set('Application.oss', ApplicationRule.replace(/ɵ/g, '\n'));
     this.name2Rule.set('Requisition.oss', RequisitionRule.replace(/ɵ/g, '\n'));
     this.name2Rule.set('ReqLineItem.oss', ReqLineItemRule.replace(/ɵ/g, '\n'));
+  }
 
 
+  ngAfterViewInit(): void {
     setTimeout(() => {
       if (window.monaco && window.monaco.languages) {
         window.monaco.languages.css.cssDefaults.setDiagnosticsOptions({
@@ -42,6 +58,20 @@ export class RequisitionFormComponent implements AfterViewInit {
         });
       }
     }, 2000);
+    this._cd.detectChanges();
+
+    console.log(this.fields)
+    this.fields.changes.subscribe((list: QueryList<NgModel>) => {
+      list.toArray().forEach(model => {
+        model.valueChanges.subscribe(change => {
+          this._cd.markForCheck();
+        });
+
+        model.statusChanges.subscribe(change => {
+          this._cd.markForCheck();
+        });
+      })
+    });
   }
 
 

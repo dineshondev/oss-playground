@@ -4,6 +4,11 @@
       <ng-container *ngTemplateOutlet="appContent">
       </ng-container>
 
+    <pre>
+       <code>
+          {{req | json}}
+         </code>
+    </pre>
     </div>
     <div class="fd-col fd-col--6">
       <ng-container *ngTemplateOutlet="ossEditor">
@@ -22,7 +27,7 @@
           <ng-template ngFor let-field [ngForOf]="rootContext | flattenVisible" let-rank="index"
                        [ngForTrackBy]="trackByFn">
             <ng-template [ngIf]="field !== 'lineItems'" [ngIfElse]="ffLines">
-              <div class="fd-col fd-col-lg--6 fd-col-xl--4 fd-col--wrap">
+              <div class="  fd-col fd-col-lg--6 fd-col-xl--4 fd-col--wrap">
                 <div class="fd-row">
                   <div class="fd-col">
                     <ng-container *ngTemplateOutlet="ff;context:{$implicit: field }">
@@ -71,6 +76,7 @@
       <ng-container
         *ngTemplateOutlet="ffControls;context:{
         $implicit: field, mc:metaField,
+        id: field,
         type: (metaField | properties:'type'),
         editable: (metaField | properties:'editable'),
         model: req
@@ -94,51 +100,83 @@
 </ng-template>
 
 
-<ng-template #ffControls let-field let-mc="mc" let-type="type" let-editable="editable" let-model="model">
+<!-- Form Field Control -->
+<ng-template #ffControls let-field let-mc="mc" let-type="type" let-id="id" let-editable="editable" let-model="model">
+<!--  <ng-container *ngTemplateOutlet="debugPrint;context:{$implicit: mc}">-->
+<!--  </ng-container>-->
+
   <ng-template [ngIf]="editable">
-    <ng-template [ngIf]="type === 'String' || type === 'Number'">
+    <ng-template [ngIf]="(mc | properties:'component': 'Table') === 'Select'">
       <ng-container
-        *ngTemplateOutlet="OtherControl;context:{ $implicit: field, mc:mc, type: (mc | properties:'type'), editable: (mc | properties:'editable'), model:model }">
+        *ngTemplateOutlet="ArrayControlAsSelect;context:{ $implicit: field, mc:mc, type: (mc | properties:'type'), id:id,
+        editable: (mc | properties:'editable'),  model:model  }">
+      </ng-container>
+    </ng-template>
+
+    <ng-template [ngIf]="(type === 'String' || type === 'Number') && (mc | properties:'component': null) === null">
+      <ng-container
+        *ngTemplateOutlet="OtherControl;context:{ $implicit: field, mc:mc, type: (mc | properties:'type'), id:id,
+        editable: (mc | properties:'editable'), model:model }">
       </ng-container>
     </ng-template>
 
     <ng-template [ngIf]="type === 'Date'">
       <ng-container
-        *ngTemplateOutlet="DateControl;context:{ $implicit: field, mc:mc, type: (mc | properties:'type'), editable: (mc | properties:'editable'), model:model }">
+        *ngTemplateOutlet="DateControl;context:{ $implicit: field, mc:mc, type: (mc | properties:'type'), id:id, editable: (mc | properties:'editable'), model:model }">
       </ng-container>
     </ng-template>
 
 
     <ng-template [ngIf]="type === 'Money'">
       <ng-container
-        *ngTemplateOutlet="MoneyControl;context:{ $implicit: field, mc:mc, type: (mc | properties:'type'), editable: (mc | properties:'editable'), model:model }">
+        *ngTemplateOutlet="MoneyControl;context:{ $implicit: field, mc:mc, type: (mc | properties:'type'), id:id, editable: (mc | properties:'editable'), model:model }">
       </ng-container>
     </ng-template>
   </ng-template>
 
-  <ng-template [ngIf]="type === 'Array'">
+  <ng-template [ngIf]="type === 'Array' && (mc | properties:'component': 'Table') === 'Table'">
     <ng-container
-      *ngTemplateOutlet="ArrayControlAsTable;context:{ $implicit: field, mc:mc, type: (mc | properties:'type'), editable: (mc | properties:'editable') }">
+      *ngTemplateOutlet="ArrayControlAsTable;context:{ $implicit: field, mc:mc, type: (mc | properties:'type'), id:id, editable: (mc | properties:'editable') }">
     </ng-container>
   </ng-template>
 
 
   <ng-template [ngIf]="!editable">
-    <span clas="string-field">{{model[field]}}</span>
+    <ng-template [ngIf]="type === 'Date'">
+      <span class="string-field">{{model[field] | date:'MM/dd/yyyy'}}</span>
+    </ng-template>
+
+    <ng-template [ngIf]="type !== 'Date'">
+      <span clas  s="string-field">{{model[field]}}</span>
+    </ng-template>
   </ng-template>
 
 </ng-template>
 
 
+<!-- Array as Select-->
+<ng-template #ArrayControlAsSelect let-field let-mc="mc" let-type="type" let-editable="editable" let-id="id"  let-model="model">
+  <ng-container *ngTemplateOutlet="renderSelect;context:{$implicit: field, mc:mc, type:type, id:id, editable: editable,  model:model }">
+  </ng-container>
+</ng-template>
+
+<!-- Array as Table-->
+<ng-template #ArrayControlAsTable let-field let-mc="mc" let-type="type" let-editable="editable">
+  <ng-container *ngTemplateOutlet="renderLineItems;context:{$implicit: mc, lines: req[field] }">
+  </ng-container>
+</ng-template>
+
+
+<!-- Render renderLineItems-->
 <ng-template #renderLineItems let-mc let-lineItems="lines">
   <table class="fd-table" *ngIf="mc | properties:'visible'">
-    <m-context [class]="mc | properties: 'elementType'" [object]="{}" style="display: table-header-group"
-               [ngClass]="'fd-table__header'" operation="list">
+    <m-context [class]="mc | properties: 'elementType'" style="display: table-header-group"
+               [ngClass]="'fd-table__header'" operation="list" [pushNewContext]="true">
       <m-context #tableMain scopeKey="class" style="display: table-row" [ngClass]="'fd-table__row'">
 
-        <ng-template ngFor let-field [ngForOf]="tableMain | flattenVisible:'table'" let-rank="index"
+        <ng-template ngFor let-field [ngForOf]="tableMain | flattenVisible:'table'" let-index="index"
                      [ngForTrackBy]="trackByFn">
-          <ng-container *ngTemplateOutlet="tableCell;context:{$implicit: field, isHeader: true}">
+          <ng-container *ngTemplateOutlet="tableCell;context:{$implicit: field, isHeader: true, index:index}">
           </ng-container>
         </ng-template>
 
@@ -147,11 +185,12 @@
 
     <tbody class="fd-table__body">
     <ng-template ngFor let-item [ngForOf]="lineItems" let-rank="index">
-      <m-context #liValue [object]="item" operation="edit" [pushNewContext]="true"
-                 style="display: table-row" [ngClass]="'fd-table__row'">
+      <m-context #liValue [object]="item" operation="edit" [pushNewContext]="true" style="display: table-row"
+                 [ngClass]="'fd-table__row'">
 
-        <ng-template ngFor let-field [ngForOf]="liValue | flattenVisible" let-rank="index" [ngForTrackBy]="trackByFn">
-          <ng-container *ngTemplateOutlet="tableCell;context:{$implicit: field, isHeader: false, model:item}">
+        <ng-template ngFor let-field [ngForOf]="liValue | flattenVisible" let-index="index" [ngForTrackBy]="trackByFn">
+          <ng-container
+            *ngTemplateOutlet="tableCell;context:{$implicit: field, isHeader: false, model:item, index:rank}">
           </ng-container>
         </ng-template>
       </m-context>
@@ -160,8 +199,8 @@
   </table>
 </ng-template>
 
-
-<ng-template #tableCell let-field let-isHeader="isHeader" let-model="model">
+<!-- table cell-->
+<ng-template #tableCell let-field let-isHeader="isHeader" let-model="model" let-index="index">
   <ng-template [ngIf]="isHeader">
     <m-context #cell [field]="field" style="display: table-cell; vertical-align: middle;"
                [ngClass]="'fd-table__cell'">
@@ -174,7 +213,9 @@
                [ngClass]="'fd-table__cell'">
       <ng-container
         *ngTemplateOutlet="ffControls;context:{
-        $implicit: field, mc:cell,
+        $implicit: field,
+        mc:cell,
+        id: field + index,
         type: (cell | properties:'type'),
         editable: (cell | properties:'editable'),
         model: model
@@ -186,55 +227,53 @@
 
 </ng-template>
 
-
-<ng-template #DateControl let-field let-mc="mc" let-type="type" let-editable="editable" let-model="model">
+<!-- Date control-->
+<ng-template #DateControl let-field let-mc="mc" let-type="type" let-editable="editable" let-model="model" let-id="id">
 
   <input #formInput="ngModel"
          metaValid
-         [attr.id]="field"
-         [attr.name]="field"
+         [attr.id]="id"
+         [attr.name]="id"
          class="fd-input"
-         type="date"
+          type="date"
          [(ngModel)]="model[field]"
          [context]="mc"
          [required]="mc | properties:'required':false"
-         [readonly]="!(mc | properties: 'editable':false)"
          [disabled]="mc | properties: 'disabled'">
 
   <ng-container *ngTemplateOutlet="error;context:{ $implicit: formInput}">
   </ng-container>
 </ng-template>
 
-<ng-template #OtherControl let-field let-mc="mc" let-type="type" let-editable="editable" let-model="model">
+<!-- string and number control-->
+<ng-template #OtherControl let-field let-mc="mc" let-type="type" let-editable="editable" let-model="model" let-id="id">
   <input #formInput="ngModel"
          metaValid
-         [attr.id]="field"
-         [attr.name]="field"
+         [attr.id]="id"
+         [attr.name]="id"
          class="fd-input"
          [attr.type]="type.toLowerCase()"
          [(ngModel)]="model[field]"
          [context]="mc"
          [required]="mc | properties:'required':false"
-         [readonly]="!(mc | properties: 'editable':false)"
          [disabled]="mc | properties: 'disabled'">
 
   <ng-container *ngTemplateOutlet="error;context:{ $implicit: formInput}">
   </ng-container>
 </ng-template>
 
-
-<ng-template #MoneyControl let-field let-mc="mc" let-type="type" let-editable="editable" let-model="model">
+<!-- Money control-->
+<ng-template #MoneyControl let-field let-mc="mc" let-type="type" let-id="id" let-editable="editable" let-model="model">
   <input #formInput="ngModel"
          metaValid
          currencyMask
          [options]="{ prefix: '$ ', thousands: '.', decimal: ',' , inputMode: 'NATURALs'}"
-         [attr.id]="field"
-         [attr.name]="field"
+         [attr.id]="id"
+         [attr.name]="id"
          class="fd-input"
          [(ngModel)]="model[field]"
          [context]="mc"
          [required]="mc | properties:'required':false"
-         [readonly]="!(mc | properties: 'editable':false)"
          [disabled]="mc | properties: 'disabled'">
 
 
@@ -242,12 +281,32 @@
   </ng-container>
 </ng-template>
 
+<!-- Select control-->
+<ng-template #renderSelect let-field let-mc="mc" let-type="type" let-editable="editable" let-model="model" let-id="id" >
 
-<ng-template #ArrayControlAsTable let-field let-mc="mc" let-type="type" let-editable="editable">
-  <ng-container *ngTemplateOutlet="renderLineItems;context:{$implicit: mc, lines: req[field] }">
+  <select #formInput="ngModel"
+          metaValid
+          [attr.id]="id"
+          [attr.name]="id"
+          class="select-css"
+          [(ngModel)]="model[field]"
+          [context]="mc"
+          [required]="mc | properties:'required':false"
+          [disabled]="mc | properties: 'disabled'" >
+    >
+    <option *ngFor="let rule of (mc | properties: 'choices')" [ngValue]="rule">{{rule}}
+    </option>
+  </select>
+
+
+  <ng-container *ngTemplateOutlet="error;context:{ $implicit: formInput}">
   </ng-container>
 </ng-template>
 
+
+
+
+<!-- Print Error -->
 <ng-template #error let-formInput>
 
   <div style="color:red" *ngIf="formInput.errors && (formInput.dirty || formInput.touched) ">
@@ -260,4 +319,46 @@
     </span>
     </p>
   </div>
+</ng-template>
+
+
+<!--<ng-container *ngTemplateOutlet="debugPrint;context:{$implicit: rootContext}">-->
+<!--</ng-container>-->
+
+
+<ng-template #debugPrint let-mc>
+  <!--    <div style="margin-top: 10px; border-top: 1px solid black">-->
+  <!--      <span [innerHTML]="mc.debugString()">-->
+  <!--      </span>-->
+  <!--    </div>-->
+
+  <ul *ngIf="true" style="margin-left: 15px">
+    <li *ngFor="let record of mc.context.allProperties()._map | keyvalue ">
+      {{record.key}} :
+      <span *ngIf="record.key === 'bindings'">
+              &#123;
+              <ul style="margin-left: 25px">
+
+                <li *ngFor="let binding of mc | properties:'bindings' | keyvalue ">
+
+                  <span
+                    *ngIf="binding.value.constructor.name === 'Expr' || binding.value.constructor.name === 'ContextFieldPath'">
+                    <span style="font-style: italic">{{binding.key}} </span>:
+                    {{binding.value.evaluate(mc.context)}}  : {{binding.value}}
+                  </span>
+
+                  <span
+                    *ngIf="binding.value.constructor.name !== 'Expr' && binding.value.constructor.name !== 'ContextFieldPath'">
+                      {{binding.key}} : {{binding.value}}
+                  </span>
+                </li>
+              </ul>
+              &#125;
+            </span>
+
+      <span *ngIf="record.key !== 'bindings'">
+             {{mc.context.propertyForKey(record.key)}}
+            </span>
+    </li>
+  </ul>
 </ng-template>
