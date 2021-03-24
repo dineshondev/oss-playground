@@ -19,7 +19,7 @@
 
 
 <ng-template #appContent>
-  <m-context #rootContext *ngIf="req" [object]="req" operation="edit" documentType="RV">
+  <m-context #rootContext [object]="req" operation="edit" [group]="currentRole">
     <m-context scopeKey="class">
       <form>
         <div class="fd-container fd-form-layout-grid-container fd-form-layout-grid-container--vertical"
@@ -46,7 +46,16 @@
 </ng-template>
 
 <ng-template #ossEditor>
+
+  <img src="../../../assets/css-vs-oss.png" class="css-oss">
+
   <div class="fd-form-item">
+
+    <select class="select-css" [(ngModel)]="currentRole"  (ngModelChange)="onRoleChange()">
+      <option value="" disabled>Target App</option>
+      <option *ngFor="let role of ['Default', 'Buyer', 'Sourcing']" [ngValue]="role">{{role}}</option>
+    </select>
+
     <select class="select-css" [(ngModel)]="currentRule" (ngModelChange)="onRuleChange()">
       >
       <option value="" disabled>Choose Rule</option>
@@ -60,7 +69,6 @@
   </div>
   <button class="fd-button fd-button--emphasized" (click)="reloadRule()">Update</button>
 </ng-template>
-
 
 <!-- Render Form Field-->
 <ng-template #ff let-field>

@@ -31,8 +31,5 @@ class=Requisition {
   zLeft => uniqueName => title  =>  status  => totalNetAmount  => dueOn => lineItems;
 }
 
-documentType=RV {
-  class=Requisition { field=title { visible: false; } }
-}
 
 

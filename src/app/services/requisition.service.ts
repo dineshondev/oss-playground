@@ -54,7 +54,7 @@ const REQUISITIONS: any[] = [{
   uniqueName: 'PR1',
   title: 'Office Items',
   dueOn: new Date(),
-  status: 'Approved',
+  status: 'New',
   totalNetAmount: 600,
   lineItems: [{
     shortText: 'Apple Keyboard',

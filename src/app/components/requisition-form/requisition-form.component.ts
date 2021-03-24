@@ -35,6 +35,7 @@ export class RequisitionFormComponent implements AfterViewInit, OnInit {
   rules: any = ['Application.oss', 'Requisition.oss', 'ReqLineItem.oss'];
   currentRule = '';
   currentRuleContent = '';
+  currentRole = '';
 
   name2Rule: Map<string, string> = new Map<string, string>();
   editorOptions = {theme: 'vs-dark', language: 'css'};
@@ -77,6 +78,10 @@ export class RequisitionFormComponent implements AfterViewInit, OnInit {
 
   onRuleChange(): void {
     this.currentRuleContent = this.name2Rule.get(this.currentRule);
+  }
+
+  onRoleChange(): void {
+    this._cd.detectChanges();
   }
 
   trackByFn(index, item) {
